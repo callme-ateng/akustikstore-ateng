@@ -1,0 +1,29 @@
+# akustikstore-ateng
+web akustikstore - ateng
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { display:flex; justify-content:center; align-items:center; height:100vh; background:#111; font-family:sans-serif; flex-direction:column; }
+  h1{color:white}
+ .btns{position:relative; width:300px; height:200px;}
+  button{padding:15px 30px; font-size:18px; border:none; border-radius:10px; cursor:pointer; position:absolute;}
+  #yes{background:#00ff88; left:20px;}
+  #no{background:#ff0044; color:white; left:150px; top:50px;}
+</style>
+</head>
+<body>
+<h1>Mau beresin lab 5S hari ini?</h1>
+<div class="btns">
+  <button id="yes" onclick="alert('MANTAP ANAK TJKT!')">MAU</button>
+  <button id="no">ENGGAK</button>
+</div>
+<script>
+  const noBtn = document.getElementById('no');
+  noBtn.onmouseover = () => {
+    noBtn.style.left = Math.random()*200 + 'px';
+    noBtn.style.top = Math.random()*150 + 'px';
+  }
+</script>
+</body>
+</html>
