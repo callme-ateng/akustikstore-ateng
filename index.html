@@ -1,27 +1,132 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AkustikStore - Ateng | Toko Gitar Akustik Bogor</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  body { display:flex; justify-content:center; align-items:center; height:100vh; background:#111; font-family:sans-serif; flex-direction:column; }
-  h1{color:white}
- .btns{position:relative; width:300px; height:200px;}
-  button{padding:15px 30px; font-size:18px; border:none; border-radius:10px; cursor:pointer; position:absolute;}
-  #yes{background:#00ff88; left:20px;}
-  #no{background:#ff0044; color:white; left:150px; top:50px;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{background:#0f0f0f;color:white}
+header{background:#111;padding:15px 5%;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;border-bottom:1px solid #222}
+.logo{font-weight:700;font-size:22px;color:#ffcc00}
+.logo span{color:white}
+nav a{color:#aaa;margin-left:20px;text-decoration:none;font-size:14px}
+.hero{background:linear-gradient(90deg,#1a1a1a 90%,#222);padding:80px 5%}
+.hero h1{font-size:42px;line-height:1.2;max-width:550px}
+.hero h1 b{color:#ffcc00}
+.hero p{color:#aaa;margin:15px 0 25px;max-width:500px}
+.btn{background:#ffcc00;color:#111;padding:12px 28px;border:none;border-radius:8px;font-weight:700;cursor:pointer}
+.section{padding:50px 5%}
+.section h2{font-size:26px;margin-bottom:25px}
+.filters{display:flex;gap:10px;margin-bottom:25px;flex-wrap:wrap}
+.filter{padding:8px 16px;border:1px solid #333;border-radius:20px;background:transparent;color:#aaa;cursor:pointer}
+.filter.active,.filter:hover{background:#ffcc00;color:#111;border-color:#ffcc00}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px}
+.card{background:#181818;border:1px solid #222;border-radius:14px;overflow:hidden}
+.card img{width:100%;height:180px;object-fit:cover;background:#222}
+.card-body{padding:15px}
+.card-body h3{font-size:15px;min-height:40px}
+.price{color:#ffcc00;font-weight:700;margin:8px 0;font-size:18px}
+.card-body small{color:#777;font-size:12px}
+.card-body button{width:100%;margin-top:10px;background:#222;color:white;border:none;padding:10px;border-radius:8px;cursor:pointer;font-weight:600}
+.card-body button:hover{background:#ffcc00;color:#111}
+.cart{position:fixed;bottom:20px;right:20px;background:#ffcc00;color:#111;padding:14px 22px;border-radius:50px;font-weight:700;cursor:pointer;z-index:20}
+#cartModal{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;justify-content:center;align-items:center;z-index:30}
+.modal{background:#181818;width:90%;max-width:420px;border-radius:16px;padding:25px;border:1px solid #333}
+.item{display:flex;justify-content:space-between;margin:10px 0;font-size:14px;color:#ccc}
+.total{border-top:1px solid #333;margin-top:15px;padding-top:15px;display:flex;justify-content:space-between;font-weight:700}
 </style>
 </head>
 <body>
-<h1>Mau beresin lab 5S hari ini?</h1>
-<div class="btns">
-  <button id="yes" onclick="alert('MANTAP ANAK TJKT!')">MAU</button>
-  <button id="no">ENGGAK</button>
+<header>
+<div class="logo">AKUSTIK<span>STORE</span> • ATENG</div>
+<nav><a href="#">Home</a><a href="#produk">Produk</a></nav>
+</header>
+
+<div class="hero">
+<h1>Gitar Akustik <b>Original</b> & Aksesoris Lengkap</h1>
+<p>Toko gitar terpercaya di Bogor. Ready Yamaha, Cort, Apolo. Senar, capo, pick, tuner, tas dan alat bahan gitar lainnya. COD & kirim se-Indonesia.</p>
+<button class="btn" onclick="document.getElementById('produk').scrollIntoView()">Lihat Katalog →</button>
 </div>
+
+<div class="section" id="produk">
+<h2>Katalog Produk</h2>
+<div class="filters">
+<button class="filter active" onclick="filterProd('all',this)">Semua</button>
+<button class="filter" onclick="filterProd('gitar',this)">Gitar Akustik</button>
+<button class="filter" onclick="filterProd('senar',this)">Senar 1 Set</button>
+<button class="filter" onclick="filterProd('aksesoris',this)">Pick & Capo</button>
+<button class="filter" onclick="filterProd('alat',this)">Alat & Bahan</button>
+</div>
+<div class="grid" id="grid"></div>
+</div>
+
+<div class="cart" onclick="openCart()">🛒 <span id="cartCount">0</span> Keranjang</div>
+
+<div id="cartModal" onclick="if(event.target==this)closeCart()">
+<div class="modal">
+<h3>Keranjang Belanja</h3>
+<div id="cartItems"><p style="color:#777">Keranjang masih kosong</p></div>
+<div class="total"><span>Total</span><span id="totalPrice">Rp 0</span></div>
+<button class="btn" style="width:100%;margin-top:20px" onclick="checkoutWA()">Checkout via WhatsApp</button>
+<button style="width:100%;margin-top:10px;background:transparent;color:#777;border:none;cursor:pointer" onclick="closeCart()">Lanjut Belanja</button>
+</div>
+</div>
+
 <script>
-  const noBtn = document.getElementById('no');
-  noBtn.onmouseover = () => {
-    noBtn.style.left = Math.random()*200 + 'px';
-    noBtn.style.top = Math.random()*150 + 'px';
-  }
+const products=[
+{id:1,nama:"Gitar Akustik Yamaha F310",harga:1450000,kat:"gitar",img:"https://images.unsplash.com/photo-1558098329-a11cff621064?q=80&w=600",desc:"Original, suara bulat enak"},
+{id:2,nama:"Gitar Akustik Cort AD810",harga:1650000,kat:"gitar",img:"https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=600",desc:"Best seller pemula-pro"},
+{id:3,nama:"Gitar Akustik Apolo 3/4 Anak",harga:650000,kat:"gitar",img:"https://images.unsplash.com/photo-1498032786690-39352d2a12fb?q=80&w=600",desc:"Ukuran kecil untuk pelajar"},
+{id:4,nama:"Senar 1 Set Elixir Nanoweb",harga:135000,kat:"senar",img:"https://images.unsplash.com/photo-1516924962500-2b4b3b99ea02?q=80&w=600",desc:"Awet 3x lipat, anti karat"},
+{id:5,nama:"Senar D'Addario EJ16 1 Set",harga:95000,kat:"senar",img:"https://images.unsplash.com/photo-1602932037504-7d2db2a8ca2c?q=80&w=600",desc:"Suara bright, paling laku"},
+{id:6,nama:"Pick Fender 12pcs + Wadah",harga:35000,kat:"aksesoris",img:"https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=600",desc:"Tebal 0.46 - 1.14mm mix"},
+{id:7,nama:"Capo Gitar Besi Premium",harga:65000,kat:"aksesoris",img:"https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=600",desc:"Jepit kuat, ga fals"},
+{id:8,nama:"Tuner Clip Chromatic",harga:55000,kat:"alat",img:"https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=600",desc:"Stem gitar akurat"},
+{id:9,nama:"Tas Gitar Busa Tebal",harga:185000,kat:"alat",img:"https://images.unsplash.com/photo-1558098329-a11cff621064?q=80&w=600",desc:"Waterproof + ransel"},
+{id:10,nama:"Strap / Tali Gitar Kulit",harga:75000,kat:"alat",img:"https://images.unsplash.com/photo-1498032786690-39352d2a12fb?q=80&w=600",desc:"Kulit sintetis kuat"},
+];
+let cart=[];
+function render(list){
+ document.getElementById('grid').innerHTML=list.map(p=>`
+ <div class="card">
+ <img src="${p.img}">
+ <div class="card-body">
+ <h3>${p.nama}</h3>
+ <small>${p.desc}</small>
+ <div class="price">Rp ${p.harga.toLocaleString('id-ID')}</div>
+ <button onclick="addCart(${p.id})">+ Keranjang</button>
+ </div></div>`).join('');
+}
+render(products);
+function filterProd(k,el){
+ document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));
+ el.classList.add('active');
+ if(k=='all') render(products); else render(products.filter(p=>p.kat==k));
+}
+function addCart(id){
+ const p=products.find(x=>x.id==id);
+ const c=cart.find(x=>x.id==id);
+ if(c) c.qty++; else cart.push({...p,qty:1});
+ document.getElementById('cartCount').innerText=cart.reduce((a,b)=>a+b.qty,0);
+ updateCart();
+}
+function updateCart(){
+ const box=document.getElementById('cartItems');
+ if(cart.length==0){box.innerHTML='<p style="color:#777">Keranjang masih kosong</p>'; document.getElementById('totalPrice').innerText='Rp 0'; return;}
+ box.innerHTML=cart.map(i=>`<div class="item"><span>${i.nama} x${i.qty}</span><span>Rp ${(i.harga*i.qty).toLocaleString('id-ID')}</span></div>`).join('');
+ document.getElementById('totalPrice').innerText='Rp '+cart.reduce((a,b)=>a+b.harga*b.qty,0).toLocaleString('id-ID');
+}
+function openCart(){updateCart(); document.getElementById('cartModal').style.display='flex'}
+function closeCart(){document.getElementById('cartModal').style.display='none'}
+function checkoutWA(){
+ if(cart.length==0) return alert('Keranjang kosong');
+ let pesan="Halo AkustikStore Ateng, saya mau pesan:%0A";
+ cart.forEach(i=>{pesan+=`- ${i.nama} x${i.qty} = Rp ${(i.harga*i.qty).toLocaleString('id-ID')}%0A`});
+ pesan+=`%0ATotal: ${document.getElementById('totalPrice').innerText}%0A%0ADari website`;
+ window.open('https://wa.me/6281234567890?text='+pesan,'_blank');
+}
 </script>
 </body>
 </html>
